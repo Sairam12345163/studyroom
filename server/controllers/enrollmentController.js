@@ -21,13 +21,30 @@ const enrollCourse = async (req, res) => {
     course.enrolledStudents.push(req.user._id);
     await course.save();
 
-    // Add course to student's enrolledCourses
+    // Add course to student + save payment history
+    const paymentMethod = req.body.paymentMethod || 
+      (course.price === 0 ? "Free" : "Online");
+      
     await User.findByIdAndUpdate(req.user._id, {
-      $push: { enrolledCourses: course._id },
+      $push: {
+        enrolledCourses: course._id,
+        paymentHistory: {
+          courseId: course._id,
+          courseTitle: course.title,
+          amount: course.price,
+          paymentMethod: paymentMethod,
+          paymentDate: new Date(),
+          status: "Success",
+        },
+      },
     });
 
-    res.status(200).json({ message: "Enrolled successfully! 🎉" });
+    res.status(200).json({ 
+      message: "Enrolled successfully! 🎉",
+      courseId: course._id,
+    });
   } catch (error) {
+    console.error("Enrollment error:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
@@ -56,7 +73,6 @@ const checkEnrollment = async (req, res) => {
     if (!course) return res.status(404).json({ message: "Course not found" });
 
     const isEnrolled = course.enrolledStudents.includes(req.user._id);
-
     res.status(200).json({ isEnrolled });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
@@ -84,9 +100,24 @@ const unenrollCourse = async (req, res) => {
   }
 };
 
+// ─── GET Payment History ──────────────────────────────
+const getPaymentHistory = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+    
+    res.status(200).json({
+      paymentHistory: user.paymentHistory || [],
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
 module.exports = {
   enrollCourse,
   getMyEnrolledCourses,
   checkEnrollment,
   unenrollCourse,
+  getPaymentHistory,
 };

@@ -21,21 +21,44 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["student", "instructor"],  // only these 2 roles allowed
+      enum: ["student", "instructor"],
       default: "student",
     },
     avatar: {
       type: String,
       default: "",
     },
+    bio: {
+      type: String,
+      default: "",
+    },
     enrolledCourses: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Course",  // links to Course model (we build later)
+        ref: "Course",
+      },
+    ],
+    paymentHistory: [
+      {
+        courseId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Course",
+        },
+        courseTitle: String,
+        amount: Number,
+        paymentMethod: String,
+        paymentDate: {
+          type: Date,
+          default: Date.now,
+        },
+        status: {
+          type: String,
+          default: "Success",
+        },
       },
     ],
   },
-  { timestamps: true }  // adds createdAt & updatedAt automatically
+  { timestamps: true }
 );
 
 module.exports = mongoose.model("User", userSchema);
