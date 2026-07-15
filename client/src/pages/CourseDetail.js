@@ -4,6 +4,8 @@ import API from "../utils/axios";
 import { useAuth } from "../context/AuthContext";
 import Loader from "../components/Loader";
 import toast from "react-hot-toast";
+import AIAssistant from "../components/AIAssistant";
+import AIQuiz from "../components/AIQuiz";
 
 // Helper to extract YouTube video ID
 const getYouTubeId = (url) => {
@@ -40,7 +42,6 @@ const CourseDetail = () => {
     try {
       const { data } = await API.get(`/courses/${id}`);
       setCourse(data.course);
-      // Set first lesson as active by default
       if (data.course.lessons?.length > 0) {
         setActiveLesson(data.course.lessons[0]);
       }
@@ -88,26 +89,18 @@ const CourseDetail = () => {
       return navigate("/login");
     }
     setEnrolling(true);
-
     try {
-      // Show loading toast
       const toastId = toast.loading(
         `Processing ${method} payment of ₹${course.price}...`
       );
-
-      // Simulate payment processing (2 seconds)
       await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // Enroll after payment
       await API.post(`/enrollments/${id}/enroll`, {
         paymentMethod: method,
       });
-
       toast.dismiss(toastId);
       toast.success(`Payment successful via ${method}! 🎉 You are now enrolled!`);
       setIsEnrolled(true);
       fetchCourse();
-
     } catch (error) {
       toast.error(error.response?.data?.message || "Payment failed! Try again.");
     } finally {
@@ -140,7 +133,6 @@ const CourseDetail = () => {
   const handleLessonClick = (lesson) => {
     if (canWatchLesson(lesson)) {
       setActiveLesson(lesson);
-      // Scroll to video player
       window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
       toast.error("Please enroll to watch this lesson! 🔒");
@@ -151,7 +143,6 @@ const CourseDetail = () => {
   const renderVideoPlayer = () => {
     if (!activeLesson) return null;
 
-    // Check if can watch this lesson
     if (!canWatchLesson(activeLesson)) {
       return (
         <div className="bg-gray-900 aspect-video flex flex-col items-center justify-center text-white">
@@ -164,7 +155,6 @@ const CourseDetail = () => {
       );
     }
 
-    // No video URL
     if (!activeLesson.videoUrl) {
       return (
         <div className="bg-gray-900 aspect-video flex flex-col items-center justify-center text-white">
@@ -177,7 +167,6 @@ const CourseDetail = () => {
       );
     }
 
-    // YouTube video
     if (isYouTubeUrl(activeLesson.videoUrl)) {
       const videoId = getYouTubeId(activeLesson.videoUrl);
       if (videoId) {
@@ -199,7 +188,6 @@ const CourseDetail = () => {
       }
     }
 
-    // Direct video URL (mp4 etc.)
     return (
       <div className="aspect-video bg-black">
         <video
@@ -240,12 +228,10 @@ const CourseDetail = () => {
               </span>
             )}
           </div>
-
           <h1 className="text-4xl font-extrabold mb-4">{course.title}</h1>
           <p className="text-purple-100 text-lg mb-6 max-w-3xl">
             {course.description}
           </p>
-
           <div className="flex flex-wrap gap-6 text-sm text-purple-200">
             <span>👨‍🏫 {course.instructor?.name}</span>
             {course.ratings?.length > 0 && (
@@ -300,7 +286,7 @@ const CourseDetail = () => {
               </h2>
               <p className="text-gray-500 text-sm mt-1">
                 {course.lessons?.length || 0} lessons •{" "}
-                {course.lessons?.filter(l => l.isFree).length || 0} free previews
+                {course.lessons?.filter((l) => l.isFree).length || 0} free previews
               </p>
             </div>
 
@@ -314,7 +300,6 @@ const CourseDetail = () => {
                 {course.lessons?.map((lesson, index) => {
                   const isActive = activeLesson?._id === lesson._id;
                   const canWatch = canWatchLesson(lesson);
-
                   return (
                     <div
                       key={lesson._id}
@@ -324,7 +309,6 @@ const CourseDetail = () => {
                         ${isActive ? "bg-purple-50 border-l-4 border-purple-500" : ""}
                       `}
                     >
-                      {/* Number */}
                       <span className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0
                         ${isActive
                           ? "bg-purple-600 text-white"
@@ -334,8 +318,6 @@ const CourseDetail = () => {
                       >
                         {index + 1}
                       </span>
-
-                      {/* Info */}
                       <div className="flex-1">
                         <p className={`font-semibold text-sm ${isActive ? "text-purple-700" : "text-gray-800"}`}>
                           {lesson.title}
@@ -345,8 +327,6 @@ const CourseDetail = () => {
                           {lesson.videoUrl && " • 🎬 Video available"}
                         </p>
                       </div>
-
-                      {/* Status */}
                       <div className="flex items-center gap-2">
                         {lesson.isFree && (
                           <span className="text-green-600 text-xs font-bold bg-green-100 px-2 py-0.5 rounded-full">
@@ -368,6 +348,15 @@ const CourseDetail = () => {
             )}
           </div>
 
+          {/* ✅ AI Quiz Section — Only for enrolled students */}
+          {isEnrolled && (
+            <AIQuiz
+              courseTitle={course.title}
+              category={course.category}
+              level={course.level}
+            />
+          )}
+
           {/* Reviews */}
           <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
             <div className="p-6 border-b border-gray-100">
@@ -384,7 +373,9 @@ const CourseDetail = () => {
                       {[1, 2, 3, 4, 5].map((star) => (
                         <span key={star} className={`text-lg ${
                           star <= Math.round(course.averageRating)
-                            ? "text-yellow-400" : "text-gray-200"}`}>
+                            ? "text-yellow-400"
+                            : "text-gray-200"}`}
+                        >
                           ★
                         </span>
                       ))}
@@ -398,7 +389,7 @@ const CourseDetail = () => {
             </div>
 
             <div className="p-6">
-              {/* Add Review Form — enrolled students only */}
+              {/* Add Review Form */}
               {isEnrolled && (
                 <div className="bg-purple-50 rounded-xl p-5 mb-6">
                   <h3 className="font-bold text-gray-800 mb-4">
@@ -432,7 +423,9 @@ const CourseDetail = () => {
                       rows={3}
                       className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-400 bg-white"
                       value={review.review}
-                      onChange={(e) => setReview({ ...review, review: e.target.value })}
+                      onChange={(e) =>
+                        setReview({ ...review, review: e.target.value })
+                      }
                     />
                     <button
                       type="submit"
@@ -451,7 +444,9 @@ const CourseDetail = () => {
                   <div className="text-4xl mb-2">💬</div>
                   <p className="text-gray-500">
                     No reviews yet.{" "}
-                    {isEnrolled ? "Be the first to review!" : "Enroll to leave a review!"}
+                    {isEnrolled
+                      ? "Be the first to review!"
+                      : "Enroll to leave a review!"}
                   </p>
                 </div>
               ) : (
@@ -469,7 +464,8 @@ const CourseDetail = () => {
                           <div className="flex">
                             {[...Array(5)].map((_, i) => (
                               <span key={i} className={`text-sm ${
-                                i < r.rating ? "text-yellow-400" : "text-gray-200"}`}>
+                                i < r.rating ? "text-yellow-400" : "text-gray-200"}`}
+                              >
                                 ★
                               </span>
                             ))}
@@ -496,9 +492,7 @@ const CourseDetail = () => {
                   <div className="text-4xl font-extrabold text-green-600 mb-1">
                     FREE
                   </div>
-                  <p className="text-gray-400 text-sm">
-                    No payment required
-                  </p>
+                  <p className="text-gray-400 text-sm">No payment required</p>
                 </div>
               ) : (
                 <div>
@@ -510,7 +504,7 @@ const CourseDetail = () => {
               )}
             </div>
 
-            {/* Enroll / Payment Section */}
+            {/* Enroll / Payment */}
             {isEnrolled ? (
               <div className="bg-green-50 border border-green-200 text-green-700 text-center py-4 rounded-xl font-bold mb-4 text-lg">
                 ✅ You are enrolled!
@@ -518,7 +512,6 @@ const CourseDetail = () => {
             ) : (
               <div className="mb-4">
                 {isFree ? (
-                  // Free course — single button
                   <button
                     onClick={handleEnroll}
                     disabled={enrolling}
@@ -534,7 +527,6 @@ const CourseDetail = () => {
                     )}
                   </button>
                 ) : (
-                  // Paid course — payment options
                   <div className="space-y-3">
                     <p className="text-sm font-bold text-gray-600 text-center mb-3">
                       Choose Payment Method:
@@ -569,47 +561,55 @@ const CourseDetail = () => {
             )}
 
             {/* Course Info */}
-           {/* Course Info */}
-<div className="space-y-3 text-sm text-gray-600 border-t border-gray-100 pt-4">
-  <p className="flex items-center gap-3">
-    <span className="text-purple-500">📖</span>
-    <span>{course.lessons?.length || 0} lessons</span>
-  </p>
-  <p className="flex items-center gap-3">
-    <span className="text-purple-500">📊</span>
-    <span>{course.level} level</span>
-  </p>
-  <p className="flex items-center gap-3">
-    <span className="text-purple-500">♾️</span>
-    <span>Full lifetime access</span>
-  </p>
-  <p className="flex items-center gap-3">
-    <span className="text-purple-500">🏆</span>
-    <span>Certificate of completion</span>
-  </p>
-  <p className="flex items-center gap-3">
-    <span className="text-purple-500">📱</span>
-    <span>Access on mobile and desktop</span>
-  </p>
-  {course.ratings?.length > 0 && (
-    <p className="flex items-center gap-3">
-      <span className="text-yellow-500">⭐</span>
-      <span>
-        {Number(course.averageRating).toFixed(1)} average rating
-      </span>
-    </p>
-  )}
-</div>
+            <div className="space-y-3 text-sm text-gray-600 border-t border-gray-100 pt-4">
+              <p className="flex items-center gap-3">
+                <span className="text-purple-500">📖</span>
+                <span>{course.lessons?.length || 0} lessons</span>
+              </p>
+              <p className="flex items-center gap-3">
+                <span className="text-purple-500">📊</span>
+                <span>{course.level} level</span>
+              </p>
+              <p className="flex items-center gap-3">
+                <span className="text-purple-500">♾️</span>
+                <span>Full lifetime access</span>
+              </p>
+              <p className="flex items-center gap-3">
+                <span className="text-purple-500">🏆</span>
+                <span>Certificate of completion</span>
+              </p>
+              <p className="flex items-center gap-3">
+                <span className="text-purple-500">📱</span>
+                <span>Access on mobile and desktop</span>
+              </p>
+              {course.ratings?.length > 0 && (
+                <p className="flex items-center gap-3">
+                  <span className="text-yellow-500">⭐</span>
+                  <span>
+                    {Number(course.averageRating).toFixed(1)} average rating
+                  </span>
+                </p>
+              )}
+            </div>
 
             {/* Free preview note */}
-            {!isEnrolled && course.lessons?.filter(l => l.isFree).length > 0 && (
-              <div className="mt-4 bg-blue-50 border border-blue-100 rounded-xl p-3 text-sm text-blue-700 text-center">
-                👀 {course.lessons?.filter(l => l.isFree).length} free preview lessons available!
-              </div>
-            )}
+            {!isEnrolled &&
+              course.lessons?.filter((l) => l.isFree).length > 0 && (
+                <div className="mt-4 bg-blue-50 border border-blue-100 rounded-xl p-3 text-sm text-blue-700 text-center">
+                  👀 {course.lessons?.filter((l) => l.isFree).length} free
+                  preview lessons available!
+                </div>
+              )}
           </div>
         </div>
       </div>
+
+      {/* ✅ AI Assistant Floating Button — Always visible on course page */}
+      <AIAssistant
+        courseTitle={course.title}
+        courseCategory={course.category}
+        lessonTitle={activeLesson?.title}
+      />
     </div>
   );
 };

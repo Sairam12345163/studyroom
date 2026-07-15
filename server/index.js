@@ -25,6 +25,8 @@ app.use("/api/courses", courseRoutes);
 app.use("/api/courses/:courseId/lessons", lessonRoutes);
 app.use("/api/enrollments", enrollmentRoutes);
 app.use("/api/courses/:courseId/reviews", reviewRoutes);
+const aiRoutes = require("./routes/aiRoutes");
+app.use("/api/ai", aiRoutes);
 
 // ─── Test Route ───────────────────────────────────────
 app.get("/", (req, res) => {

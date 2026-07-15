@@ -112,6 +112,10 @@ const Navbar = () => {
           >
             Courses
           </Link>
+          <Link to="/ai-recommender"
+          className="text-sm font-medium text-purple-200 hover:text-yellow-400 transition-colors flex items-center gap-1">
+            🤖 AI Recommend
+            </Link>
           {!user ? (
             <>
               <Link
