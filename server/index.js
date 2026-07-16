@@ -27,6 +27,15 @@ app.use("/api/enrollments", enrollmentRoutes);
 app.use("/api/courses/:courseId/reviews", reviewRoutes);
 const aiRoutes = require("./routes/aiRoutes");
 app.use("/api/ai", aiRoutes);
+app.use(cors({
+  origin: [
+    "http://localhost:3000",
+    "https://studyroom-ashy.vercel.app",
+    "https://studyroom-a2u0zh4vl-sairam12345163s-projects.vercel.app",
+    /\.vercel\.app$/,
+  ],
+  credentials: true,
+}));
 
 // ─── Test Route ───────────────────────────────────────
 app.get("/", (req, res) => {
