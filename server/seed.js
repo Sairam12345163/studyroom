@@ -323,8 +323,8 @@ const generateLessons = (courseTitle) => {
 // ─── Seed Function ────────────────────────────────────
 const seedDatabase = async () => {
   try {
-    await await mongoose.connect(process.env.MONGO_URI || process.env.MONGO_URL);;
-    console.log("✅ MongoDB Connected");
+      await mongoose.connect(process.env.MONGO_URI || process.env.MONGO_URL);
+      console.log("✅ MongoDB Connected");
 
     // Clear existing data
     console.log("🗑️  Clearing existing courses...");
