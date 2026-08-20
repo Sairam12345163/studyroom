@@ -8,6 +8,7 @@ import CourseDetail from "./pages/CourseDetail";
 import StudentDashboard from "./pages/StudentDashboard";
 import InstructorDashboard from "./pages/InstructorDashboard";
 import Profile from "./pages/Profile";
+import AIRecommender from "./pages/AIRecommender";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -25,6 +26,14 @@ function App() {
           element={
             <ProtectedRoute>
               <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/ai-recommender"
+          element={
+            <ProtectedRoute>
+              <AIRecommender />
             </ProtectedRoute>
           }
         />
