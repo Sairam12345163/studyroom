@@ -296,7 +296,69 @@ const generateDescription = (title, category) => {
   return `Master ${title} with this comprehensive course. Learn everything from basics to advanced concepts in ${category}. This course includes hands-on projects, real-world examples, and industry best practices. Perfect for beginners and professionals looking to upgrade their skills.`;
 };
 
-const generateLessons = (courseTitle) => {
+const generateLessons = (courseTitle, category) => {
+  // Real YouTube video IDs by category
+  const videosByCategory = {
+    "Web Development": [
+      "https://www.youtube.com/watch?v=UB1O30fR-EE",
+      "https://www.youtube.com/watch?v=hdI2bqOjy3c",
+      "https://www.youtube.com/watch?v=Tn6-PIqc4UM",
+      "https://www.youtube.com/watch?v=w7ejDZ8SWv8",
+      "https://www.youtube.com/watch?v=4UZrsTqkcW4",
+    ],
+    "Data Science": [
+      "https://www.youtube.com/watch?v=ua-CiDNNj30",
+      "https://www.youtube.com/watch?v=LHBE6Q9XlzI",
+      "https://www.youtube.com/watch?v=a9UrKTVEeZA",
+      "https://www.youtube.com/watch?v=vmEHCJofslg",
+      "https://www.youtube.com/watch?v=r-uOLxNrNk8",
+    ],
+    "Machine Learning": [
+      "https://www.youtube.com/watch?v=GwIo3gDZCVQ",
+      "https://www.youtube.com/watch?v=aircAruvnKk",
+      "https://www.youtube.com/watch?v=tPYj3fFJGjk",
+      "https://www.youtube.com/watch?v=i_LwzRVP7bg",
+      "https://www.youtube.com/watch?v=Gv9_4yMHFhI",
+    ],
+    "Mobile Development": [
+      "https://www.youtube.com/watch?v=0-S5a0eXPoc",
+      "https://www.youtube.com/watch?v=VozPNrt-LfE",
+      "https://www.youtube.com/watch?v=fis26HvvDII",
+      "https://www.youtube.com/watch?v=1NceBWipy-Y",
+      "https://www.youtube.com/watch?v=x0uinJvhNxI",
+    ],
+    "DevOps": [
+      "https://www.youtube.com/watch?v=fqMOX6JJhGo",
+      "https://www.youtube.com/watch?v=kTp5xUtcalw",
+      "https://www.youtube.com/watch?v=pg19Z8LL06w",
+      "https://www.youtube.com/watch?v=RqTEHSBrYFw",
+      "https://www.youtube.com/watch?v=7XDeI5fyj3w",
+    ],
+    "Design": [
+      "https://www.youtube.com/watch?v=II-6dDzc-80",
+      "https://www.youtube.com/watch?v=c9Wg6Cb_YlU",
+      "https://www.youtube.com/watch?v=FTFaQWZBqQ8",
+      "https://www.youtube.com/watch?v=68w2VwalD5w",
+      "https://www.youtube.com/watch?v=yNDgFK2Jj1E",
+    ],
+    "Business": [
+      "https://www.youtube.com/watch?v=bixR-KIJKYM",
+      "https://www.youtube.com/watch?v=nU-IIXBWlS4",
+      "https://www.youtube.com/watch?v=1Lyuc4m5Yf4",
+      "https://www.youtube.com/watch?v=mY8B2lXIu6g",
+      "https://www.youtube.com/watch?v=E9de-cmycx8",
+    ],
+    "Other": [
+      "https://www.youtube.com/watch?v=fNk_zzaMoSs",
+      "https://www.youtube.com/watch?v=inpok4MKVLM",
+      "https://www.youtube.com/watch?v=rfscVS0vtbw",
+      "https://www.youtube.com/watch?v=8mAITcNt710",
+      "https://www.youtube.com/watch?v=SXA0QR4pqgQ",
+    ],
+  };
+
+  const videos = videosByCategory[category] || videosByCategory["Other"];
+
   const lessonTemplates = [
     `Introduction to ${courseTitle}`,
     "Setting Up Your Environment",
@@ -313,7 +375,7 @@ const generateLessons = (courseTitle) => {
   return lessonTemplates.map((title, i) => ({
     title,
     description: `Learn ${title.toLowerCase()} in depth with practical examples.`,
-    videoUrl: `https://www.youtube.com/watch?v=dQw4w9WgXcQ`,
+    videoUrl: videos[i % videos.length],
     duration: getRandomInt(10, 60),
     order: i + 1,
     isFree: i < 2,
