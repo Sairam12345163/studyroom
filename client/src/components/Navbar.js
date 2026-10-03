@@ -11,83 +11,103 @@ const Navbar = () => {
 
   const handleLogout = () => {
     logout();
-    toast.success("Logged out successfully!");
+    toast.success("Logged out!");
     navigate("/");
   };
 
   const isActive = (path) => location.pathname === path;
 
   return (
-    <nav className="bg-gradient-to-r from-indigo-900 via-purple-900 to-indigo-900 text-white shadow-xl sticky top-0 z-50 backdrop-blur-xl border-b border-white border-opacity-10">
+    <nav className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+
         {/* Logo */}
-        <Link
-          to="/"
-          className="text-2xl font-extrabold flex items-center gap-2 hover:scale-105 transition-transform"
-        >
-          📚
-          <span className="bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
-            StudyRoom
-          </span>
+        <Link to="/" className="flex items-center gap-2">
+          <div className="w-8 h-8 bg-slate-800 rounded-lg flex items-center justify-center">
+            <span className="text-white text-sm font-bold">S</span>
+          </div>
+          <span className="text-xl font-bold text-slate-800">StudyRoom</span>
         </Link>
 
         {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden md:flex items-center gap-6">
           <Link
             to="/courses"
-            className={`text-sm font-medium transition-all duration-200 hover:text-yellow-400 ${
-              isActive("/courses") ? "text-yellow-400" : "text-purple-200"
+            className={`text-sm font-medium transition-colors ${
+              isActive("/courses")
+                ? "text-slate-800 font-semibold"
+                : "text-slate-500 hover:text-slate-800"
             }`}
           >
             Courses
           </Link>
 
+          {user && (
+            <>
+              <Link
+                to="/ai-recommender"
+                className={`text-sm font-medium transition-colors flex items-center gap-1.5 ${
+                  isActive("/ai-recommender")
+                    ? "text-slate-800 font-semibold"
+                    : "text-slate-500 hover:text-slate-800"
+                }`}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+                AI Learning
+              </Link>
+
+              <Link
+                to={`/dashboard/${user.role}`}
+                className={`text-sm font-medium transition-colors ${
+                  location.pathname.includes("dashboard")
+                    ? "text-slate-800 font-semibold"
+                    : "text-slate-500 hover:text-slate-800"
+                }`}
+              >
+                Dashboard
+              </Link>
+            </>
+          )}
+        </div>
+
+        {/* Right Side */}
+        <div className="hidden md:flex items-center gap-3">
           {!user ? (
             <>
               <Link
                 to="/login"
-                className="text-sm font-medium text-purple-200 hover:text-yellow-400 transition-colors"
+                className="text-sm font-medium text-slate-600 hover:text-slate-800 transition-colors px-4 py-2"
               >
-                Login
+                Sign in
               </Link>
               <Link
                 to="/register"
-                className="bg-gradient-to-r from-yellow-400 to-orange-500 text-black px-6 py-2 rounded-full font-bold text-sm hover:shadow-lg hover:scale-105 transition-all duration-300"
+                className="text-sm font-semibold bg-slate-800 text-white px-5 py-2 rounded-lg hover:bg-slate-700 transition-colors"
               >
-                Get Started Free
+                Get Started
               </Link>
             </>
           ) : (
             <>
               <Link
-                to={`/dashboard/${user.role}`}
-                className={`text-sm font-medium transition-colors hover:text-yellow-400 ${
-                  location.pathname.includes("dashboard")
-                    ? "text-yellow-400"
-                    : "text-purple-200"
-                }`}
-              >
-                Dashboard
-              </Link>
-
-              {/* Profile */}
-              <Link
                 to="/profile"
-                className="flex items-center gap-2 bg-white bg-opacity-10 hover:bg-opacity-20 border border-white border-opacity-20 px-3 py-2 rounded-full transition-all duration-200"
+                className="flex items-center gap-2 hover:bg-gray-50 px-3 py-2 rounded-lg transition-colors"
               >
-                <div className="w-7 h-7 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center font-bold text-black text-sm">
+                <div className="w-8 h-8 bg-slate-800 rounded-full flex items-center justify-center font-semibold text-white text-sm">
                   {user.name?.charAt(0).toUpperCase()}
                 </div>
-                <span className="text-sm text-white hidden lg:block">
+                <span className="text-sm font-medium text-slate-700 hidden lg:block">
                   {user.name?.split(" ")[0]}
                 </span>
               </Link>
 
               <button
                 onClick={handleLogout}
-                className="bg-red-500 bg-opacity-20 border border-red-400 border-opacity-40 text-red-300 px-4 py-2 rounded-full text-sm font-medium hover:bg-opacity-40 hover:text-red-200 transition-all duration-200"
+                className="text-sm font-medium text-slate-500 hover:text-red-600 transition-colors px-3 py-2"
               >
-                Logout
+                Sign out
               </button>
             </>
           )}
@@ -95,66 +115,78 @@ const Navbar = () => {
 
         {/* Mobile Menu Button */}
         <button
-          className="md:hidden text-white"
+          className="md:hidden text-slate-700 p-2"
           onClick={() => setMenuOpen(!menuOpen)}
         >
-          {menuOpen ? "✕" : "☰"}
+          {menuOpen ? (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          ) : (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          )}
         </button>
       </div>
 
       {/* Mobile Menu */}
       {menuOpen && (
-        <div className="md:hidden bg-indigo-900 bg-opacity-95 backdrop-blur-xl border-t border-white border-opacity-10 px-6 py-4 space-y-3">
+        <div className="md:hidden bg-white border-t border-gray-100 px-6 py-4 space-y-1">
           <Link
             to="/courses"
-            className="block text-purple-200 hover:text-yellow-400 py-2"
+            className="block text-slate-700 hover:bg-gray-50 py-2 px-3 rounded-lg text-sm font-medium"
             onClick={() => setMenuOpen(false)}
           >
             Courses
           </Link>
-          <Link to="/ai-recommender"
-          className="text-sm font-medium text-purple-200 hover:text-yellow-400 transition-colors flex items-center gap-1">
-            🤖 AI Recommend
-            </Link>
-          {!user ? (
+          {user && (
             <>
               <Link
-                to="/login"
-                className="block text-purple-200 hover:text-yellow-400 py-2"
+                to="/ai-recommender"
+                className="block text-slate-700 hover:bg-gray-50 py-2 px-3 rounded-lg text-sm font-medium"
                 onClick={() => setMenuOpen(false)}
               >
-                Login
+                AI Learning
               </Link>
-              <Link
-                to="/register"
-                className="block bg-gradient-to-r from-yellow-400 to-orange-500 text-black px-6 py-2 rounded-full font-bold text-center"
-                onClick={() => setMenuOpen(false)}
-              >
-                Get Started Free
-              </Link>
-            </>
-          ) : (
-            <>
               <Link
                 to={`/dashboard/${user.role}`}
-                className="block text-purple-200 hover:text-yellow-400 py-2"
+                className="block text-slate-700 hover:bg-gray-50 py-2 px-3 rounded-lg text-sm font-medium"
                 onClick={() => setMenuOpen(false)}
               >
                 Dashboard
               </Link>
               <Link
                 to="/profile"
-                className="block text-purple-200 hover:text-yellow-400 py-2"
+                className="block text-slate-700 hover:bg-gray-50 py-2 px-3 rounded-lg text-sm font-medium"
                 onClick={() => setMenuOpen(false)}
               >
                 Profile
               </Link>
               <button
                 onClick={handleLogout}
-                className="block w-full text-red-300 py-2 text-left"
+                className="block w-full text-left text-red-600 hover:bg-red-50 py-2 px-3 rounded-lg text-sm font-medium"
               >
-                Logout
+                Sign out
               </button>
+            </>
+          )}
+          {!user && (
+            <>
+              <Link
+                to="/login"
+                className="block text-slate-700 hover:bg-gray-50 py-2 px-3 rounded-lg text-sm font-medium"
+                onClick={() => setMenuOpen(false)}
+              >
+                Sign in
+              </Link>
+              <Link
+                to="/register"
+                className="block bg-slate-800 text-white py-2 px-3 rounded-lg text-sm font-semibold text-center mt-2"
+                onClick={() => setMenuOpen(false)}
+              >
+                Get Started
+              </Link>
             </>
           )}
         </div>
