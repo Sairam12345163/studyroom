@@ -1,13 +1,8 @@
 const Loader = () => {
   return (
-    <div className="flex flex-col justify-center items-center h-64 gap-4">
-      <div className="relative">
-        <div className="w-16 h-16 border-4 border-purple-200 rounded-full animate-spin border-t-purple-600"></div>
-        <div className="absolute inset-0 flex items-center justify-center text-2xl">
-          📚
-        </div>
-      </div>
-      <p className="text-purple-600 font-medium animate-pulse">Loading...</p>
+    <div className="flex flex-col justify-center items-center h-64 gap-3">
+      <div className="w-8 h-8 border-2 border-slate-200 border-t-slate-900 rounded-full animate-spin"></div>
+      <p className="text-slate-400 text-sm">Loading...</p>
     </div>
   );
 };

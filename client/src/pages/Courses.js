@@ -49,34 +49,38 @@ const Courses = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Hero */}
-      <div className="bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 py-16 px-6">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl font-extrabold text-white mb-4">
-            Explore Our Courses 📚
+    <div className="min-h-screen bg-[#fafaf9]">
+
+      {/* Header */}
+      <div className="bg-white border-b border-gray-100">
+        <div className="max-w-6xl mx-auto px-6 py-10">
+          <h1 className="text-3xl font-bold text-slate-900 mb-1">
+            All Courses
           </h1>
-          <p className="text-purple-200 text-lg mb-8">
-            Discover 500+ courses across all categories
+          <p className="text-slate-500 text-sm mb-6">
+            Explore our full library of courses
           </p>
 
-          {/* Search Bar */}
-          <form onSubmit={handleSearch} className="flex gap-3 max-w-2xl mx-auto">
+          {/* Search */}
+          <form onSubmit={handleSearch} className="flex gap-3 max-w-2xl">
             <div className="flex-1 relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
-                🔍
-              </span>
+              <svg
+                className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                fill="none" stroke="currentColor" viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
               <input
                 type="text"
-                placeholder="Search for anything..."
-                className="w-full pl-12 pr-4 py-4 rounded-2xl text-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-400 shadow-lg"
+                placeholder="Search courses..."
+                className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-300 focus:border-slate-300 bg-white text-slate-800 placeholder-slate-400"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
             </div>
             <button
               type="submit"
-              className="bg-gradient-to-r from-yellow-400 to-orange-500 text-black px-8 py-4 rounded-2xl font-bold hover:shadow-xl hover:scale-105 transition-all duration-300"
+              className="bg-slate-900 text-white px-6 py-2.5 rounded-lg font-semibold text-sm hover:bg-slate-700 transition-colors"
             >
               Search
             </button>
@@ -84,14 +88,14 @@ const Courses = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 py-10">
-        {/* Filters */}
-        <div className="bg-white rounded-2xl shadow-md p-6 mb-8 flex flex-wrap gap-4 items-center">
-          <span className="font-bold text-gray-700">Filter:</span>
+      <div className="max-w-6xl mx-auto px-6 py-8">
 
-          {/* Category Filter */}
+        {/* Filters */}
+        <div className="flex flex-wrap gap-3 items-center mb-6 pb-6 border-b border-gray-100">
+          <span className="text-sm font-medium text-slate-500">Filter:</span>
+
           <select
-            className="border border-gray-200 rounded-xl px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-400 bg-gray-50"
+            className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-300 bg-white text-slate-700"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
           >
@@ -101,9 +105,8 @@ const Courses = () => {
             ))}
           </select>
 
-          {/* Level Filter */}
           <select
-            className="border border-gray-200 rounded-xl px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-400 bg-gray-50"
+            className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-300 bg-white text-slate-700"
             value={level}
             onChange={(e) => setLevel(e.target.value)}
           >
@@ -113,16 +116,16 @@ const Courses = () => {
             ))}
           </select>
 
-          {/* Category Pills */}
-          <div className="flex flex-wrap gap-2 ml-2">
+          {/* Quick Pills */}
+          <div className="flex flex-wrap gap-2">
             {["Web Development", "Data Science", "Machine Learning", "Design"].map((cat) => (
               <button
                 key={cat}
                 onClick={() => setCategory(category === cat ? "" : cat)}
-                className={`px-4 py-1 rounded-full text-sm font-medium transition-all duration-200 ${
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${
                   category === cat
-                    ? "bg-purple-600 text-white shadow-md"
-                    : "bg-purple-50 text-purple-700 hover:bg-purple-100"
+                    ? "bg-slate-900 text-white"
+                    : "bg-white border border-gray-200 text-slate-600 hover:border-slate-300 hover:text-slate-900"
                 }`}
               >
                 {cat}
@@ -130,45 +133,44 @@ const Courses = () => {
             ))}
           </div>
 
-          {/* Clear Filters */}
           {(category || level || search) && (
             <button
-              onClick={() => {
-                setCategory("");
-                setLevel("");
-                setSearch("");
-              }}
-              className="ml-auto text-red-500 text-sm font-medium hover:text-red-700 transition-colors"
+              onClick={() => { setCategory(""); setLevel(""); setSearch(""); }}
+              className="ml-auto text-sm text-red-500 hover:text-red-700 font-medium flex items-center gap-1"
             >
-              ✕ Clear Filters
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              Clear
             </button>
           )}
         </div>
 
-        {/* Results Count */}
+        {/* Results */}
         {!loading && (
-          <p className="text-gray-500 mb-6 font-medium">
+          <p className="text-sm text-slate-500 mb-6">
             Showing{" "}
-            <span className="text-purple-600 font-bold">{courses.length}</span>{" "}
-            courses{category && ` in "${category}"`}
+            <span className="font-semibold text-slate-900">{courses.length}</span>{" "}
+            courses{category ? ` in "${category}"` : ""}
           </p>
         )}
 
-        {/* Course Grid */}
         {loading ? (
           <Loader />
         ) : courses.length === 0 ? (
           <div className="text-center py-24">
-            <div className="text-8xl mb-6">😕</div>
-            <p className="text-gray-500 text-2xl font-bold mb-2">
-              No courses found
-            </p>
-            <p className="text-gray-400">
+            <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <p className="text-slate-900 font-semibold text-lg mb-1">No courses found</p>
+            <p className="text-slate-500 text-sm">
               Try different search terms or filters
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
             {courses.map((course) => (
               <CourseCard key={course._id} course={course} />
             ))}

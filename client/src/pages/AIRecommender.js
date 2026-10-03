@@ -1,20 +1,17 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import API from "../utils/axios";
-import { useAuth } from "../context/AuthContext";
 
 const AIRecommender = () => {
-  const { user } = useAuth();
-  const [form, setForm] = useState({
-    interests: "",
-    level: "Beginner",
-  });
+  const [form, setForm] = useState({ interests: "", level: "Beginner" });
   const [recommendations, setRecommendations] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError(null);
     try {
       const { data } = await API.post("/ai/recommend", {
         interests: form.interests,
@@ -23,202 +20,186 @@ const AIRecommender = () => {
       });
       setRecommendations(data);
     } catch (error) {
-      console.error(error);
+      setError("AI recommendation is temporarily unavailable. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  const priorityColor = {
-    high: "bg-red-100 text-red-700 border-red-200",
-    medium: "bg-yellow-100 text-yellow-700 border-yellow-200",
-    low: "bg-green-100 text-green-700 border-green-200",
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Hero */}
-      <div className="bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 py-16 px-6 text-center">
-        <div className="max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-full px-5 py-2 mb-6">
-            <span className="text-yellow-400">✨</span>
-            <span className="text-white text-sm font-medium">
-              Powered by Claude AI
-            </span>
+    <div className="min-h-screen bg-[#fafaf9]">
+
+      {/* Header */}
+      <div className="bg-white border-b border-gray-100">
+        <div className="max-w-4xl mx-auto px-6 py-10">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center">
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+              </svg>
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-slate-900">AI Learning Path</h1>
+              <p className="text-slate-400 text-sm">
+                Get personalized course recommendations powered by Claude AI
+              </p>
+            </div>
           </div>
-          <h1 className="text-5xl font-extrabold text-white mb-4">
-            AI Course Recommender 🤖
-          </h1>
-          <p className="text-purple-200 text-lg">
-            Tell us your interests and our AI will create a personalized
-            learning path just for you!
-          </p>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-6 py-12">
+      <div className="max-w-4xl mx-auto px-6 py-8">
+
         {/* Form */}
         {!recommendations && (
-          <div className="bg-white rounded-3xl shadow-xl p-8 mb-8">
-            <h2 className="text-2xl font-extrabold text-gray-800 mb-6 flex items-center gap-3">
-              <span className="bg-gradient-to-r from-purple-500 to-pink-500 w-10 h-10 rounded-xl flex items-center justify-center text-white text-lg">
-                🎯
-              </span>
-              Tell Us About Yourself
-            </h2>
+          <div className="bg-white border border-gray-100 rounded-xl p-6 shadow-sm mb-6">
+            <h2 className="font-semibold text-slate-900 mb-5">Tell us about yourself</h2>
+            <form onSubmit={handleSubmit} className="space-y-5">
 
-            <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">
-                  What are your interests & goals? *
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                  What are your interests and goals? *
                 </label>
                 <textarea
                   rows={4}
-                  placeholder="e.g. I want to become a web developer, I'm interested in Python and data science, I want to build mobile apps, I want to learn AI/ML..."
-                  className="w-full border-2 border-gray-200 rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400 bg-gray-50 text-gray-800 resize-none"
+                  placeholder="e.g. I want to become a web developer, I'm interested in Python and data science, I want to build mobile apps..."
+                  className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-300 focus:border-slate-300 text-slate-800 placeholder-slate-400 resize-none"
                   value={form.interests}
-                  onChange={(e) =>
-                    setForm({ ...form, interests: e.target.value })
-                  }
+                  onChange={(e) => setForm({ ...form, interests: e.target.value })}
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-gray-700 mb-3">
-                  Your Current Level
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Your current level
                 </label>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-3 gap-3">
                   {[
-                    { value: "Beginner", icon: "🌱", desc: "Just starting out" },
-                    { value: "Intermediate", icon: "🚀", desc: "Some experience" },
-                    { value: "Advanced", icon: "⚡", desc: "Experienced developer" },
+                    { value: "Beginner", label: "Beginner", desc: "Just starting out" },
+                    { value: "Intermediate", label: "Intermediate", desc: "Some experience" },
+                    { value: "Advanced", label: "Advanced", desc: "Experienced" },
                   ].map((l) => (
                     <button
                       key={l.value}
                       type="button"
                       onClick={() => setForm({ ...form, level: l.value })}
-                      className={`p-4 rounded-2xl border-2 text-center transition-all duration-200 ${
+                      className={`p-4 rounded-xl border-2 text-left transition-all ${
                         form.level === l.value
-                          ? "border-purple-500 bg-purple-50"
-                          : "border-gray-200 hover:border-purple-300"
+                          ? "border-slate-900 bg-slate-50"
+                          : "border-gray-200 hover:border-gray-300 bg-white"
                       }`}
                     >
-                      <div className="text-3xl mb-2">{l.icon}</div>
-                      <div className="font-bold text-gray-800 text-sm">
-                        {l.value}
-                      </div>
-                      <div className="text-gray-500 text-xs mt-1">
-                        {l.desc}
-                      </div>
+                      <div className="font-semibold text-slate-900 text-sm">{l.label}</div>
+                      <div className="text-slate-400 text-xs mt-0.5">{l.desc}</div>
                     </button>
                   ))}
                 </div>
               </div>
 
+              {error && (
+                <div className="bg-red-50 border border-red-100 rounded-lg px-4 py-3 text-sm text-red-600">
+                  {error}
+                </div>
+              )}
+
               <button
                 type="submit"
                 disabled={loading || !form.interests.trim()}
-                className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-4 rounded-2xl font-bold text-lg hover:shadow-xl hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:scale-100"
+                className="w-full bg-slate-900 text-white py-3 rounded-lg font-semibold text-sm hover:bg-slate-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
-                  <span className="flex items-center justify-center gap-3">
-                    <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <span className="flex items-center justify-center gap-2">
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                     AI is analyzing your profile...
                   </span>
                 ) : (
-                  "Get My Personalized Learning Path 🚀"
+                  "Get My Learning Path"
                 )}
               </button>
             </form>
           </div>
         )}
 
-        {/* Recommendations */}
+        {/* Results */}
         {recommendations && (
-          <div className="space-y-6">
+          <div className="space-y-5">
+
             {/* Motivational Message */}
-            <div className="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-3xl p-6 text-white text-center">
-              <div className="text-4xl mb-3">🌟</div>
-              <p className="text-lg font-medium leading-relaxed">
+            <div className="bg-slate-900 text-white rounded-xl p-6">
+              <p className="text-slate-300 text-sm leading-relaxed">
                 {recommendations.motivationalMessage}
               </p>
             </div>
 
             {/* Learning Path */}
-            <div className="bg-white rounded-3xl shadow-lg p-6">
-              <h3 className="text-xl font-extrabold text-gray-800 mb-4 flex items-center gap-2">
-                <span>🗺️</span> Your Personalized Learning Path
+            <div className="bg-white border border-gray-100 rounded-xl p-6 shadow-sm">
+              <h3 className="font-semibold text-slate-900 mb-3 flex items-center gap-2">
+                <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                </svg>
+                Your Learning Path
               </h3>
-              <p className="text-gray-600 leading-relaxed bg-blue-50 rounded-2xl p-4 border border-blue-100">
+              <p className="text-slate-600 text-sm leading-relaxed bg-slate-50 rounded-lg p-4 border border-gray-100">
                 {recommendations.learningPath}
               </p>
             </div>
 
             {/* Recommendations */}
-            <h3 className="text-2xl font-extrabold text-gray-800">
-              Recommended Categories 📚
-            </h3>
+            <h3 className="font-semibold text-slate-900">Recommended Categories</h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {recommendations.recommendations?.map((rec, i) => (
-                <div
-                  key={i}
-                  className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
-                >
-                  {/* Header */}
-                  <div className="flex justify-between items-start mb-4">
-                    <h4 className="font-extrabold text-gray-800 text-lg">
-                      {rec.category}
-                    </h4>
-                    <span className={`text-xs px-3 py-1 rounded-full font-bold border capitalize ${priorityColor[rec.priority] || priorityColor.medium}`}>
-                      {rec.priority} priority
+                <div key={i} className="bg-white border border-gray-100 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                  <div className="flex justify-between items-start mb-3">
+                    <h4 className="font-semibold text-slate-900">{rec.category}</h4>
+                    <span className={`text-xs px-2 py-0.5 rounded-full font-semibold border capitalize ${
+                      rec.priority === "high"
+                        ? "bg-red-50 text-red-600 border-red-100"
+                        : rec.priority === "medium"
+                          ? "bg-amber-50 text-amber-600 border-amber-100"
+                          : "bg-emerald-50 text-emerald-600 border-emerald-100"
+                    }`}>
+                      {rec.priority}
                     </span>
                   </div>
 
-                  {/* Reason */}
-                  <p className="text-gray-600 text-sm mb-4 leading-relaxed">
+                  <p className="text-slate-500 text-sm mb-4 leading-relaxed">
                     {rec.reason}
                   </p>
 
-                  {/* Suggested Courses */}
                   <div className="mb-4">
-                    <p className="text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide">
-                      Suggested Courses:
+                    <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                      Suggested courses
                     </p>
-                    <div className="space-y-2">
+                    <div className="space-y-1.5">
                       {rec.courses?.map((course, j) => (
-                        <div
-                          key={j}
-                          className="flex items-center gap-2 text-sm"
-                        >
-                          <span className="w-5 h-5 bg-purple-100 text-purple-700 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">
+                        <div key={j} className="flex items-center gap-2 text-sm text-slate-600">
+                          <span className="w-5 h-5 bg-slate-100 text-slate-500 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">
                             {j + 1}
                           </span>
-                          <span className="text-gray-700">{course}</span>
+                          {course}
                         </div>
                       ))}
                     </div>
                   </div>
 
-                  {/* Browse Button */}
                   <Link
                     to={`/courses?category=${rec.category}`}
-                    className="block text-center bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-2 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 text-sm"
+                    className="block text-center bg-slate-900 text-white py-2 rounded-lg text-sm font-semibold hover:bg-slate-700 transition-colors"
                   >
-                    Browse {rec.category} Courses →
+                    Browse {rec.category} →
                   </Link>
                 </div>
               ))}
             </div>
 
-            {/* Try Again */}
-            <div className="text-center">
+            <div className="text-center pt-2">
               <button
                 onClick={() => setRecommendations(null)}
-                className="bg-white border-2 border-purple-300 text-purple-700 px-8 py-3 rounded-xl font-bold hover:bg-purple-50 transition-all duration-300"
+                className="border border-gray-200 text-slate-600 px-6 py-2.5 rounded-lg text-sm font-semibold hover:border-slate-300 hover:text-slate-900 transition-colors"
               >
-                🔄 Get New Recommendations
+                Get New Recommendations
               </button>
             </div>
           </div>
