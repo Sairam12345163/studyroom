@@ -212,37 +212,41 @@ const CourseDetail = () => {
   return (
     <div className="min-h-screen bg-gray-50">
 
+      
+     
       {/* Hero */}
-      <div className="bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 text-white py-12 px-6">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex flex-wrap gap-2 mb-4">
-            <span className="bg-white bg-opacity-20 text-white px-3 py-1 rounded-full text-sm font-semibold">
-              {course.category}
-            </span>
-            <span className="bg-white bg-opacity-20 text-white px-3 py-1 rounded-full text-sm font-semibold">
-              {course.level}
-            </span>
-            {isFree && (
-              <span className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-bold">
-                FREE COURSE
-              </span>
-            )}
-          </div>
-          <h1 className="text-4xl font-extrabold mb-4">{course.title}</h1>
-          <p className="text-purple-100 text-lg mb-6 max-w-3xl">
-            {course.description}
-          </p>
-          <div className="flex flex-wrap gap-6 text-sm text-purple-200">
-            <span>👨‍🏫 {course.instructor?.name}</span>
-            {course.ratings?.length > 0 && (
-              <span>⭐ {Number(course.averageRating).toFixed(1)} rating</span>
-            )}
-            <span>👥 {course.enrolledStudents?.length || 0} students</span>
-            <span>📖 {course.lessons?.length || 0} lessons</span>
-            <span>📊 {course.level}</span>
-          </div>
-        </div>
-      </div>
+<div className="bg-white border-b border-gray-100">
+  <div className="max-w-6xl mx-auto px-6 py-10">
+    <div className="flex flex-wrap gap-2 mb-4">
+      <span className="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-xs font-semibold">
+        {course.category}
+      </span>
+      <span className="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-xs font-semibold">
+        {course.level}
+      </span>
+      {isFree && (
+        <span className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-semibold">
+          Free Course
+        </span>
+      )}
+    </div>
+    <h1 className="text-3xl font-bold text-slate-900 mb-3">
+      {course.title}
+    </h1>
+    <p className="text-slate-500 mb-5 max-w-3xl leading-relaxed">
+      {course.description}
+    </p>
+    <div className="flex flex-wrap gap-5 text-sm text-slate-500">
+      <span>By {course.instructor?.name}</span>
+      {course.ratings?.length > 0 && (
+        <span>⭐ {Number(course.averageRating).toFixed(1)} rating</span>
+      )}
+      <span>{course.enrolledStudents?.length || 0} students</span>
+      <span>{course.lessons?.length || 0} lessons</span>
+      <span>{course.level}</span>
+    </div>
+  </div>
+</div>
 
       <div className="max-w-6xl mx-auto px-6 py-10 grid grid-cols-1 lg:grid-cols-3 gap-8">
 
@@ -531,30 +535,30 @@ const CourseDetail = () => {
                     <p className="text-sm font-bold text-gray-600 text-center mb-3">
                       Choose Payment Method:
                     </p>
-                    {[
-                      { method: "Razorpay", icon: "💳", color: "from-blue-600 to-blue-700" },
-                      { method: "UPI", icon: "📱", color: "from-green-600 to-green-700" },
-                      { method: "Card", icon: "🏦", color: "from-purple-600 to-purple-700" },
-                    ].map(({ method, icon, color }) => (
-                      <button
-                        key={method}
-                        onClick={() => handlePayment(method)}
-                        disabled={enrolling}
-                        className={`w-full bg-gradient-to-r ${color} text-white py-3 rounded-xl font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:scale-100 flex items-center justify-center gap-2`}
-                      >
-                        {enrolling ? (
-                          <span className="flex items-center gap-2">
-                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                            Processing...
-                          </span>
-                        ) : (
-                          <>
-                            <span>{icon}</span>
-                            Pay ₹{course.price} with {method}
-                          </>
-                        )}
-                      </button>
-                    ))}
+  {[
+  { method: "Razorpay", icon: "💳", bg: "bg-slate-900 hover:bg-slate-700" },
+  { method: "UPI", icon: "📱", bg: "bg-slate-700 hover:bg-slate-600" },
+  { method: "Card", icon: "🏦", bg: "bg-slate-600 hover:bg-slate-500" },
+].map(({ method, icon, bg }) => (
+  <button
+    key={method}
+    onClick={() => handlePayment(method)}
+    disabled={enrolling}
+    className={`w-full ${bg} text-white py-3 rounded-xl font-semibold text-sm transition-colors disabled:opacity-50 flex items-center justify-center gap-2`}
+  >
+    {enrolling ? (
+      <span className="flex items-center gap-2">
+        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+        Processing...
+      </span>
+    ) : (
+      <>
+        <span>{icon}</span>
+        Pay ₹{course.price} with {method}
+      </>
+    )}
+  </button>
+))}
                   </div>
                 )}
               </div>
